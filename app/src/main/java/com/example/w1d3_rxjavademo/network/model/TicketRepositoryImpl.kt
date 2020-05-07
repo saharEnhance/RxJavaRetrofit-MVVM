@@ -13,7 +13,8 @@ open class TicketRepositoryImpl(private val ticketRestService: TicketRestService
         return ticketRestService
             .getTickets(from, to)
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())    }
+            .observeOn(AndroidSchedulers.mainThread())
+    }
 
     override fun getPriceList(
         flightNumber: String,
@@ -23,6 +24,7 @@ open class TicketRepositoryImpl(private val ticketRestService: TicketRestService
         return ticketRestService
             .getPrice(flightNumber, from, to)
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())    }
+            .observeOn(AndroidSchedulers.mainThread())
+    }
 }
 

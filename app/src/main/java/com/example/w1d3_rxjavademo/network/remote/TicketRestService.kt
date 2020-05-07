@@ -37,7 +37,7 @@ interface TicketRestService {
                             .addHeader("Accept", "application/json")
                             .addHeader("Request-Type", "Android")
                             .addHeader("Content-Type", "application/json")
-                            .addHeader("x-rapidapi-host", "https://api.androidhive.info/json/")
+                            //.addHeader("x-rapidapi-host", "https://api.androidhive.info/json/")
                         val request = requestBuilder.build()
                         return chain.proceed(request)
                     }
@@ -52,59 +52,6 @@ interface TicketRestService {
             retrofit.create(TicketRestService::class.java)
         }
     }
-
-
-
-
-/*     object ApiClient : TicketRestService {
-        private val TAG = ApiClient::class.java.simpleName
-        private var retrofit: Retrofit? = null
-        private const val REQUEST_TIMEOUT = 60
-        private var okHttpClient: OkHttpClient? = null
-        val client: Retrofit?
-            get() {
-                if (okHttpClient == null) initOkHttp()
-                if (retrofit == null) {
-                    retrofit = Retrofit.Builder()
-                        .baseUrl("https://api.androidhive.info/json/")
-                        .client(okHttpClient)
-                        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build()
-                }
-                return retrofit
-            }
-
-        private fun initOkHttp() {
-            val httpClient = OkHttpClient().newBuilder()
-                .connectTimeout(
-                    REQUEST_TIMEOUT.toLong(),
-                    TimeUnit.SECONDS
-                )
-                .readTimeout(REQUEST_TIMEOUT.toLong(), TimeUnit.SECONDS)
-                .writeTimeout(REQUEST_TIMEOUT.toLong(), TimeUnit.SECONDS)
-            val interceptor = HttpLoggingInterceptor()
-            interceptor.level = HttpLoggingInterceptor.Level.BODY
-            httpClient.addInterceptor(interceptor)
-            val addInterceptor = httpClient.addInterceptor { chain ->
-                val original = chain.request()
-                val requestBuilder = original.newBuilder()
-                    .addHeader("Accept", "application/json")
-                    .addHeader("Request-Type", "Android")
-                    .addHeader("Content-Type", "application/json")
-                val request = requestBuilder.build()
-                chain.proceed(request)
-            }
-            okHttpClient = httpClient.build()
-        }
-
-        fun resetApiClient() {
-            retrofit = null
-            okHttpClient = null
-        }}*/
-
-
-
     @GET("airline-tickets.php")
     fun getTickets(@Query("from") from: String, @Query("to") to: String): Single<TicketResponse>
 
