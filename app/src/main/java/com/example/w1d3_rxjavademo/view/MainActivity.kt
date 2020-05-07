@@ -2,6 +2,7 @@ package com.example.w1d3_rxjavademo.view
 
 import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -15,23 +16,21 @@ import com.example.w1d3_rxjavademo.inject.Injection
 import com.example.w1d3_rxjavademo.network.model.Ticket
 import io.reactivex.disposables.CompositeDisposable
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlin.math.roundToInt
 import com.example.w1d3_rxjavademo.viewmodel.TicketViewModel
 import com.example.w1d3_rxjavademo.viewmodel.TicketViewModelFactory
+import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var viewModel: TicketViewModel
     lateinit var mAdapter: TicketsAdapter
     val injection = Injection()
-
-
     private val from = "DEL"
     private val to = "HYD"
     // CompositeDisposable is used to dispose the subscriptions in onDestroy() method.
     private val disposable = CompositeDisposable()
-    //lateinit var apiService: ApiService
-    //lateinit var mAdapter: TicketsAdapter
     private var ticketsList: MutableList<Ticket> = mutableListOf()
     lateinit var recyclerView: RecyclerView
 
@@ -42,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar!!.title = "$from > $to"
+
 
         viewModel = ViewModelProvider(
             this,
@@ -56,11 +56,20 @@ class MainActivity : AppCompatActivity() {
                 else -> displayMessage("Something Went Wrong... Try Again.")
             }
         })
+
+
         initRecyclerView()
+        viewModel.getTickets(from,to)
+       // Log.d("myTag0",viewModel.getTickets(from,to).);
+
     }
     private fun displayTickets(ticketsList: MutableList<Ticket>) {
         // set recycler to eliminate flicker
+        Log.d("myTag",ticketsList.toString());
+        viewModel.getTickets(from,to)
         mAdapter.updateTickets(ticketsList)
+        Log.d("myTag2",ticketsList.toString());
+
 
         // set correct visible element
      /*   progressBar.visibility = View.GONE
@@ -73,6 +82,8 @@ class MainActivity : AppCompatActivity() {
     /*    progressBar.visibility = View.VISIBLE
         rvNews.visibility = View.GONE
         messageText.visibility = View.GONE*/
+        Log.d("myTagload","loading----");
+
     }
 
     private fun displayMessage(message: String) {
@@ -82,8 +93,11 @@ class MainActivity : AppCompatActivity() {
         messageText.visibility = View.VISIBLE
         //set message
         messageText.text = message*/
+        Log.d("myTagMessage","message");
+
     }
     private fun initRecyclerView() {
+
         mAdapter = TicketsAdapter(applicationContext, ticketsList){ ticket : Ticket -> onTicketSelected(ticket) }
         val mLayoutManager: RecyclerView.LayoutManager = GridLayoutManager(this, 1)
         recyclerView = findViewById(R.id.recycler_view)

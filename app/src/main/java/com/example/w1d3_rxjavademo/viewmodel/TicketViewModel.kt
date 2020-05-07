@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.w1d3_rxjavademo.network.model.Ticket
 import com.example.w1d3_rxjavademo.network.model.TicketRepository
-import com.example.w1d3_rxjavademo.network.response.TicketResponse
 import com.jakewharton.rxbinding.support.v7.widget.RxSearchView
 import io.reactivex.disposables.CompositeDisposable
 import rx.Notification
@@ -20,16 +19,16 @@ class TicketViewModel constructor(private val ticketRepository: TicketRepository
     val stateLiveData: LiveData<AppState> get() = stateMutableLiveData
     var loaded = false
 
-    private fun getTickets(from: String, to: String) {
+     fun getTickets(from: String, to: String) {
 
         stateMutableLiveData.value = AppState.LOADING
         disposable.add(
             ticketRepository.getTicketsList(from, to).subscribe({
                 loaded = true
-                if (it.ticketsList.isEmpty()) {
+                if (it.isEmpty()) {
                     stateMutableLiveData.value = AppState.ERROR("No Definitions Retrieved")
                 } else {
-                    stateMutableLiveData.value = AppState.SUCCESS(it.ticketsList)
+                    stateMutableLiveData.value = AppState.SUCCESS(it)
                 }
             }, {
                 loaded = true

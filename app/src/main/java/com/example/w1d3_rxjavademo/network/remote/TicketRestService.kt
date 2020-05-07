@@ -1,9 +1,8 @@
 package com.example.w1d3_rxjavademo.network.remote
 
-import com.example.w1d3_rxjavademo.network.model.Price
+
 import com.example.w1d3_rxjavademo.network.model.Ticket
 import com.example.w1d3_rxjavademo.network.response.PriceResponse
-import com.example.w1d3_rxjavademo.network.response.TicketResponse
 import io.reactivex.Single
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -53,7 +52,7 @@ interface TicketRestService {
         }
     }
     @GET("airline-tickets.php")
-    fun getTickets(@Query("from") from: String, @Query("to") to: String): Single<TicketResponse>
+    fun getTickets(@Query("from") from: String, @Query("to") to: String): Single<MutableList<Ticket>>
 
     @GET("airline-tickets-price.php")
     fun getPrice(@Query("flight_number") flightNumber: String, @Query("from") from: String, @Query("to") to: String): Single<PriceResponse>
