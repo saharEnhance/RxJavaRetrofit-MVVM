@@ -1,7 +1,6 @@
 package com.example.w1d3_rxjavademo.network.model
 
 import com.example.w1d3_rxjavademo.network.remote.TicketRestService
-import com.example.w1d3_rxjavademo.network.response.PriceResponse
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -19,7 +18,7 @@ open class TicketRepositoryImpl(private val ticketRestService: TicketRestService
         flightNumber: String,
         from: String,
         to: String
-    ): Single<PriceResponse> {
+    ): Single<Price> {
         return ticketRestService
             .getPrice(flightNumber, from, to)
             .subscribeOn(Schedulers.io())

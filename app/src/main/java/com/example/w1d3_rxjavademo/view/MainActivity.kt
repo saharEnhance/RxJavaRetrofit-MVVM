@@ -17,6 +17,7 @@ import com.example.w1d3_rxjavademo.network.model.Ticket
 import io.reactivex.disposables.CompositeDisposable
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.w1d3_rxjavademo.network.model.Price
 import kotlin.math.roundToInt
 import com.example.w1d3_rxjavademo.viewmodel.TicketViewModel
 import com.example.w1d3_rxjavademo.viewmodel.TicketViewModelFactory
@@ -52,31 +53,49 @@ class MainActivity : AppCompatActivity() {
             when (appState) {
                 is TicketViewModel.AppState.LOADING -> displayLoading()
                 is TicketViewModel.AppState.SUCCESS -> displayTickets(appState.ticketList)
+               is TicketViewModel.AppState.PriceSUCCESS-> displayPrice(appState.price)
                 is TicketViewModel.AppState.ERROR -> displayMessage(appState.message)
                 else -> displayMessage("Something Went Wrong... Try Again.")
             }
         })
-
-
         initRecyclerView()
         viewModel.getTickets(from,to)
-       // Log.d("myTag0",viewModel.getTickets(from,to).);
+        for (ticket in ticketsList) {
+            Log.d("************Tag******", ticket.price.toString());
+            viewModel.getPrice(ticket.flightNumber,from,to)
+            val position = ticketsList.indexOf(ticket)
+
+            mAdapter.updatePrice( ticket,position)
+
+        }
 
     }
     private fun displayTickets(ticketsList: MutableList<Ticket>) {
         // set recycler to eliminate flicker
-        Log.d("myTag",ticketsList.toString());
-        viewModel.getTickets(from,to)
         mAdapter.updateTickets(ticketsList)
-        Log.d("myTag2",ticketsList.toString());
+
+        for (ticket in ticketsList) {
+            viewModel.getPrice(ticket.flightNumber,from,to)
+            val position = ticketsList.indexOf(ticket)
+
+            mAdapter.updatePrice( ticket,position)
+            Log.d("myTag2211==========", ticket.price.toString());
+            Log.d("myTag",ticketsList.toString());
 
 
-        // set correct visible element
-     /*   progressBar.visibility = View.GONE
-        rvNews.visibility = View.VISIBLE
-        messageText.visibility = View.GONE*/
+        }
     }
+    private fun displayPrice(price: Price) {
+        for (ticket in ticketsList) {
+            viewModel.getPrice(ticket.flightNumber,from,to)
+            val position = ticketsList.indexOf(ticket)
 
+            mAdapter.updatePrice( ticket,position)
+            Log.d("p==========", ticket.price.toString());
+
+        }
+
+    }
     private fun displayLoading() {
         // set correct visible element
     /*    progressBar.visibility = View.VISIBLE
@@ -120,7 +139,4 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, "Clicked: ${ticket?.flightNumber}", Toast.LENGTH_LONG).show()
 
     }
-  /*  private fun ticketSearch() {
-        viewModel.searchTickets(word_search)
-    }*/
 }

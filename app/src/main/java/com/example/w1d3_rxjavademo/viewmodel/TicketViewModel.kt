@@ -4,6 +4,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.w1d3_rxjavademo.network.model.Price
 import com.example.w1d3_rxjavademo.network.model.Ticket
 import com.example.w1d3_rxjavademo.network.model.TicketRepository
 import com.jakewharton.rxbinding.support.v7.widget.RxSearchView
@@ -26,7 +27,7 @@ class TicketViewModel constructor(private val ticketRepository: TicketRepository
             ticketRepository.getTicketsList(from, to).subscribe({
                 loaded = true
                 if (it.isEmpty()) {
-                    stateMutableLiveData.value = AppState.ERROR("No Definitions Retrieved")
+                    stateMutableLiveData.value = AppState.ERROR("No Tickets Retrieved")
                 } else {
                     stateMutableLiveData.value = AppState.SUCCESS(it)
                 }
@@ -41,22 +42,31 @@ class TicketViewModel constructor(private val ticketRepository: TicketRepository
             })
         )
     }
-/*    fun searchTickets(searchView: SearchView) {
-        RxSearchView.queryTextChanges(searchView)
-            .doOnEach { notification: Notification<in CharSequence?> ->
-                val query = notification.value as CharSequence?
-                if (query != null && query.length > 4) {
-                    getTickets(query.toString())
-                }
-            }
-            .debounce(
-                300,
-                TimeUnit.MILLISECONDS
-            ) // to skip intermediate letters
-            .retry(3)
-            .subscribe()
-    }*/
 
+
+    fun getPrice(flightNumber: String,from: String, to: String) {
+
+        stateMutableLiveData.value = AppState.LOADING
+        disposable.add(
+            ticketRepository.getPriceList(flightNumber, from, to)
+                .subscribe({
+                loaded = true
+                if (it == null) {
+                    stateMutableLiveData.value = AppState.ERROR("No price Retrieved")
+                } else {
+                    stateMutableLiveData.value = AppState.PriceSUCCESS(it)
+                }
+            }, {
+                loaded = true
+                //errors
+                val errorString = when (it) {
+                    is UnknownHostException -> "No Internet Connection"
+                    else -> it.localizedMessage
+                }
+                stateMutableLiveData.value = AppState.ERROR(errorString)
+            })
+        )
+    }
 
     override fun onCleared() {
         super.onCleared()
@@ -65,6 +75,8 @@ class TicketViewModel constructor(private val ticketRepository: TicketRepository
     sealed class AppState {
         object LOADING : AppState()
         data class SUCCESS(val ticketList: MutableList<Ticket>) : AppState()
+        data class PriceSUCCESS(val price: Price) : AppState()
+
         data class ERROR(val message: String) : AppState()
     }
 
